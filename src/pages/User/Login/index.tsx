@@ -1,6 +1,6 @@
 import Footer from '@/components/Footer';
-import { userLoginUsingPOST } from '@/services/wj-api-backend/userController';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
+import { userLoginUsingPOST } from '@/services/wj-api-backend/userController';
 import {
   AlipayCircleOutlined,
   LockOutlined,
@@ -16,11 +16,10 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { FormattedMessage, history, SelectLang, useIntl, useModel, Helmet } from '@umijs/max';
+import { FormattedMessage, Helmet, history, SelectLang, useIntl, useModel } from '@umijs/max';
 import { Alert, message, Tabs } from 'antd';
-import Settings from '../../../../config/defaultSettings';
 import React, { useState } from 'react';
-import { flushSync } from 'react-dom';
+import Settings from '../../../../config/defaultSettings';
 
 const ActionIcons = () => {
   const langClassName = useEmotionCss(({ token }) => {
@@ -84,9 +83,9 @@ const LoginMessage: React.FC<{
 };
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
+  const [userLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { setInitialState } = useModel('@@initialState');
 
   const containerClassName = useEmotionCss(() => {
     return {
@@ -102,25 +101,18 @@ const Login: React.FC = () => {
 
   const intl = useIntl();
 
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-    if (userInfo) {
-      flushSync(() => {
-        setInitialState((s) => ({
-          ...s,
-          currentUser: userInfo,
-        }));
-      });
-    }
-  };
-
   const handleSubmit = async (values: API.UserLoginRequest) => {
     try {
       // 登录
       const res = await userLoginUsingPOST({ ...values });
       if (res.data) {
-        const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/');
+        setInitialState({
+          loginUser: res.data,
+        });
+        setTimeout(() => {
+          const urlParams = new URL(window.location.href).searchParams;
+          history.push(urlParams.get('redirect') || '/');
+        }, 100);
         return;
       }
     } catch (error) {
