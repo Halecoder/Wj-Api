@@ -22,12 +22,11 @@ import static com.hl.project.constant.UserConstant.USER_LOGIN_STATE;
 /**
  * 用户服务实现类
  *
- * @author yupi
+ * @author HL
  */
 @Service
 @Slf4j
-public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-        implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User>  implements UserService {
 
     @Resource
     private UserMapper userMapper;
@@ -35,7 +34,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     /**
      * 盐值，混淆密码
      */
-    private static final String SALT = "yupi";
+    private static final String SALT = "halecoder";
 
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
