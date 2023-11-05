@@ -2,11 +2,10 @@ package com.hl.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.core.util.StrUtil;
+import com.hl.client.WJApiClient;
 import com.hl.project.annotation.AuthCheck;
-import com.hl.project.common.BaseResponse;
-import com.hl.project.common.DeleteRequest;
-import com.hl.project.common.ErrorCode;
-import com.hl.project.common.ResultUtils;
+import com.hl.project.common.*;
 import com.hl.project.constant.CommonConstant;
 import com.hl.project.exception.BusinessException;
 
@@ -15,6 +14,7 @@ import com.hl.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.hl.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.hl.project.model.entity.InterfaceInfo;
 import com.hl.project.model.entity.User;
+import com.hl.project.model.enums.InterfaceInfoStatusEnum;
 import com.hl.project.service.InterfaceInfoService;
 import com.hl.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
@@ -35,6 +36,9 @@ public class InterfaceInfoController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private WJApiClient wjApiClient;
 
     // region 增删改查
 
@@ -154,6 +158,67 @@ public class InterfaceInfoController {
         QueryWrapper<InterfaceInfo> queryWrapper = new QueryWrapper<>(interfaceInfoQuery);
         List<InterfaceInfo> interfaceInfoList = interfaceInfoService.list(queryWrapper);
         return ResultUtils.success(interfaceInfoList);
+    }
+
+
+        /**
+         * 上线接口
+     	 ** @param idRequest 携带id
+     	 * @return 是否上线成功
+         * */
+    @PostMapping("/online")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest) throws UnsupportedEncodingException {
+        if (idRequest == null || idRequest.getId() < 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 判断接口是否存在
+        long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 判断接口是否能使用
+        // TODO 根据测试地址来调用
+        // 这里我先用固定的方法进行测试，后面来改
+        com.hl.model.User user = new com.hl.model.User();
+        user.setUsername("MARS");
+        String name = wjApiClient.getNameByPostWithJson(user);
+        if (StrUtil.isBlank(name)) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
+        }
+        // 更新数据库
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
+        boolean isSuccessful = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(isSuccessful);
+    }
+
+    /**
+     * 下线接口
+     *
+     * @param idRequest 携带id
+     * @return 是否下线成功
+     */
+    @PostMapping("/offline")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest) {
+        if (idRequest == null || idRequest.getId() < 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 判断接口是否存在
+        long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 更新数据库
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
+        boolean isSuccessful = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(isSuccessful);
     }
 
     /**
