@@ -19,7 +19,9 @@ import java.util.Map;
 import static com.hl.utils.SignUtils.genSign;
 
 public class WJApiClient {
-    private static final String GATEWAY_HOST = "http://localhost:8080";
+
+    //走网关 进行相关处理，比如鉴权、限流、熔断、负载均衡、API调用统计等 网关处理后再转发回来进行业务处理
+    private static final String GATEWAY_HOST = "http://localhost:8090";
 
     private String accessKey;
 
