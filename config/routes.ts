@@ -5,7 +5,16 @@ export default [
     layout: false,
     routes: [{ path: '/user/login', name: '登录', component: './User/Login' }],
   },
-  { path: '/', name: '主页', icon: 'smile', component: './Welcome' },
+  { path: '/welcome', name: '主页', icon: 'smile', component: './Index' },
+
+  {
+    // 动态路由
+    path: '/interface_info/:id',
+    name: 'interface info',
+    component: './InterfaceInfo',
+    // 不在菜单页显示
+    hideInMenu: true,
+  },
 
   {
     path: '/admin',

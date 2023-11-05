@@ -2,6 +2,8 @@ import {
   addInterfaceInfoUsingPOST,
   deleteInterfaceInfoUsingPOST,
   listInterfaceInfoByPageUsingGET,
+  offlineInterfaceInfoUsingPOST,
+  onlineInterfaceInfoUsingPOST,
   updateInterfaceInfoUsingPOST,
 } from '@/services/wj-api-backend/interfaceInfoController';
 import { PlusOutlined } from '@ant-design/icons';
@@ -115,6 +117,54 @@ const TableList: React.FC = () => {
   };
 
   /**
+   * @en-US Online Interface
+   * @zh-CN 发布接口
+   *
+   * @param fields
+   */
+  const handleOnlineInterface = async (fields: API.IdRequest) => {
+    const hide = message.loading('正在发布');
+    try {
+      let res = await onlineInterfaceInfoUsingPOST({ ...fields });
+      if (res.data) {
+        hide();
+        message.success('发布成功!');
+        // 刷新页面
+        actionRef.current?.reload();
+        return true;
+      }
+    } catch (error: any) {
+      hide();
+      message.error('发布失败!' + error.message);
+      return false;
+    }
+  };
+
+  /**
+   * @en-US Offline Interface
+   * @zh-CN 下线接口
+   *
+   * @param fields
+   */
+  const handleOfflineInterface = async (fields: API.IdRequest) => {
+    const hide = message.loading('正在下线');
+    try {
+      let res = await offlineInterfaceInfoUsingPOST({ ...fields });
+      if (res.data) {
+        hide();
+        message.success('下线成功!');
+        // 刷新页面
+        actionRef.current?.reload();
+        return true;
+      }
+    } catch (error: any) {
+      hide();
+      message.error('下线失败!' + error.message);
+      return false;
+    }
+  };
+
+  /**
    * @en-US International configuration
    * @zh-CN 国际化配置
    * */
@@ -198,43 +248,48 @@ const TableList: React.FC = () => {
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
-        <a
+        <Button
           key="config"
-          onClick={() => {
-            handleUpdateModalOpen(true);
-            setCurrentRow(record);
-          }}
-        >
-          配置
-        </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          订阅警报
-        </a>,
-      ],
-    },
-    // 在columns中添加删除按钮
-    {
-      title: '操作',
-      dataIndex: 'option',
-      valueType: 'option',
-      render: (_, record) => [
-        <a
-          key="config"
+          type={'link'}
           onClick={() => {
             handleUpdateModalOpen(true);
             setCurrentRow(record);
           }}
         >
           编辑
-        </a>,
-        <a
+        </Button>,
+        record.status === 0 ? (
+          <Button
+            key="online"
+            type={'link'}
+            onClick={() => {
+              handleOnlineInterface(record);
+            }}
+          >
+            发布
+          </Button>
+        ) : (
+          <Button
+            key="offline"
+            type={'text'}
+            // danger={true}
+            onClick={() => {
+              handleOfflineInterface(record);
+            }}
+          >
+            下线
+          </Button>
+        ),
+        <Button
           key="delete"
+          type={'text'}
+          danger={true}
           onClick={() => {
             handleRemoveInterfaceInfo(record);
           }}
         >
           删除
-        </a>,
+        </Button>,
       ],
     },
   ];
@@ -437,6 +492,3 @@ const TableList: React.FC = () => {
 };
 
 export default TableList;
-// function handleModalOpen(arg0: boolean) {
-//   throw new Error('Function not implemented.');
-// }
