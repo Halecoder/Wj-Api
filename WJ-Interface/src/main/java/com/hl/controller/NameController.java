@@ -38,21 +38,24 @@ public class NameController {
             return "无权限";
         }
         // TODO 使用accessKey去数据库查询secretKey
+
+
+
         // 假设查到的secret是abc 进行加密得到sign
-        String secretKey = "abc";
-        String sign1 = SignUtils.genSign(body, secretKey);
-        if (!StrUtil.equals(sign, sign1)) {
-            return "无权限";
-        }
-        // TODO 判断随机数nonce
-        // 时间戳是否为数字
-        if (!NumberUtil.isNumber(timestamp)) {
-            return "无权限";
-        }
-        // 五分钟内的请求有效
-        if (System.currentTimeMillis() - Long.parseLong(timestamp) > 5 * 60 * 1000) {
-            return "无权限";
-        }
+//        String secretKey = "abc";
+//        String sign1 = SignUtils.genSign(body, secretKey);
+//        if (!StrUtil.equals(sign, sign1)) {
+//            return "无权限";
+//        }
+//        // TODO 判断随机数nonce
+//        // 时间戳是否为数字
+//        if (!NumberUtil.isNumber(timestamp)) {
+//            return "无权限";
+//        }
+//        // 五分钟内的请求有效
+//        if (System.currentTimeMillis() - Long.parseLong(timestamp) > 5 * 60 * 1000) {
+//            return "无权限";
+//        }
         return "发送POST请求 JSON中你的名字是：" + user.getUsername();
     }
 

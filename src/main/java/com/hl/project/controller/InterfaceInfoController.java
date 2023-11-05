@@ -1,5 +1,6 @@
 package com.hl.project.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.core.util.StrUtil;
@@ -12,6 +13,7 @@ import com.hl.project.exception.BusinessException;
 import com.hl.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
 import com.hl.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.hl.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
+import com.hl.project.model.dto.interfaceinfo.InvokeInterfaceRequest;
 import com.hl.project.model.entity.InterfaceInfo;
 import com.hl.project.model.entity.User;
 import com.hl.project.model.enums.InterfaceInfoStatusEnum;
@@ -219,6 +221,38 @@ public class InterfaceInfoController {
         interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
         boolean isSuccessful = interfaceInfoService.updateById(interfaceInfo);
         return ResultUtils.success(isSuccessful);
+    }
+
+    /**
+     * 在线调用接口
+     *
+     * @param invokeInterfaceRequest 携带id、请求参数
+     * @return data
+     */
+    @PostMapping("/invoke")
+    public BaseResponse<Object> invokeInterface(@RequestBody InvokeInterfaceRequest invokeInterfaceRequest, HttpServletRequest request) throws UnsupportedEncodingException {
+        if (invokeInterfaceRequest == null || invokeInterfaceRequest.getId() < 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 判断接口是否存在
+        long id = invokeInterfaceRequest.getId();
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
+        if (interfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if (interfaceInfo.getStatus() != InterfaceInfoStatusEnum.ONLINE.getValue()) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口未上线");
+        }
+        // 得到当前用户
+        User loginUser = userService.getLoginUser(request);
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        WJApiClient client = new WJApiClient(accessKey, secretKey);
+        // 先写死请求
+        String userRequestParams = invokeInterfaceRequest.getRequestParams();
+        com.hl.model.User user = JSONUtil.toBean(userRequestParams, com.hl.model.User.class);
+        String result = client.getNameByPostWithJson(user);
+        return ResultUtils.success(result);
     }
 
     /**
