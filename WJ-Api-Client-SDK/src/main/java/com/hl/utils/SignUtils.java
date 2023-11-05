@@ -15,5 +15,4 @@ public class SignUtils {
         String content = body + "." + secretKey;
         return md5.digestHex(content);
     }
-
 }
