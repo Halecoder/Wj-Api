@@ -7,6 +7,7 @@ import com.hl.model.User;
 import com.hl.utils.SignUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -23,6 +24,11 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @RequestMapping("/name")
 public class NameController {
+
+    @PostMapping("/test")
+    public String test(@RequestParam String name) {
+        return "test" + name;
+    }
 
     @PostMapping("/user")
     public String getNameByPostWithJson(@RequestBody User user, HttpServletRequest request) throws UnsupportedEncodingException {
@@ -56,7 +62,12 @@ public class NameController {
 //        if (System.currentTimeMillis() - Long.parseLong(timestamp) > 5 * 60 * 1000) {
 //            return "无权限";
 //        }
-        return "发送POST请求 JSON中你的名字是：" + user.getUsername();
+        String result =  "发送POST请求 JSON中你的名字是：" + user.getUsername();
+
+        //调用次数+1
+
+
+        return result;
     }
 
 }
