@@ -17,12 +17,11 @@ import {
   ProFormTextArea,
   ProTable,
 } from '@ant-design/pro-components';
-import { FormattedMessage, useIntl } from '@umijs/max';
+import '@umijs/max';
 import { Button, Drawer, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import CreateModal from './components/CreateModal';
 import { default as UpdateForm, default as UpdateModal } from './components/UpdateModal';
-
 const TableList: React.FC = () => {
   /**
    * @en-US Pop-up window of new window
@@ -34,9 +33,7 @@ const TableList: React.FC = () => {
    * @zh-CN 分布更新窗口的弹窗
    * */
   const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
-
   const [showDetail, setShowDetail] = useState<boolean>(false);
-
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
   const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>([]);
@@ -96,7 +93,6 @@ const TableList: React.FC = () => {
       return false;
     }
   };
-
   const handleRemoveInterfaceInfo = async (record: API.InterfaceInfo) => {
     const hide = message.loading('正在删除');
     if (!record) return true;
@@ -125,7 +121,9 @@ const TableList: React.FC = () => {
   const handleOnlineInterface = async (fields: API.IdRequest) => {
     const hide = message.loading('正在发布');
     try {
-      let res = await onlineInterfaceInfoUsingPOST({ ...fields });
+      let res = await onlineInterfaceInfoUsingPOST({
+        ...fields,
+      });
       if (res.data) {
         hide();
         message.success('发布成功!');
@@ -149,7 +147,9 @@ const TableList: React.FC = () => {
   const handleOfflineInterface = async (fields: API.IdRequest) => {
     const hide = message.loading('正在下线');
     try {
-      let res = await offlineInterfaceInfoUsingPOST({ ...fields });
+      let res = await offlineInterfaceInfoUsingPOST({
+        ...fields,
+      });
       if (res.data) {
         hide();
         message.success('下线成功!');
@@ -168,7 +168,6 @@ const TableList: React.FC = () => {
    * @en-US International configuration
    * @zh-CN 国际化配置
    * */
-  const intl = useIntl();
 
   const columns: ProColumns<API.InterfaceInfo>[] = [
     {
@@ -176,13 +175,17 @@ const TableList: React.FC = () => {
       dataIndex: 'id',
       valueType: 'index',
     },
-
     {
       title: '接口名称',
       dataIndex: 'name',
       valueType: 'text',
       formItemProps: {
-        rules: [{ required: true, message: '接口名称为必填项' }],
+        rules: [
+          {
+            required: true,
+            message: '接口名称为必填项',
+          },
+        ],
       },
     },
     {
@@ -195,7 +198,11 @@ const TableList: React.FC = () => {
       dataIndex: 'method',
       valueType: 'text',
       formItemProps: {
-        rules: [{ required: true }],
+        rules: [
+          {
+            required: true,
+          },
+        ],
       },
     },
     {
@@ -203,17 +210,22 @@ const TableList: React.FC = () => {
       dataIndex: 'url',
       valueType: 'text',
       formItemProps: {
-        rules: [{ required: true, message: 'url为必填项' }],
+        rules: [
+          {
+            required: true,
+            message: 'url为必填项',
+          },
+        ],
       },
     },
     {
       title: '请求头',
-      dataIndex: 'requestHeader',
+      dataIndex: 'requestheader',
       valueType: 'textarea',
     },
     {
       title: '响应头',
-      dataIndex: 'responseHeader',
+      dataIndex: 'responseheader',
       valueType: 'textarea',
     },
     {
@@ -233,13 +245,13 @@ const TableList: React.FC = () => {
     },
     {
       title: '创建时间',
-      dataIndex: 'createTime',
+      dataIndex: 'createtime',
       valueType: 'dateTime',
       hideInForm: true,
     },
     {
       title: '更新时间',
-      dataIndex: 'updateTime',
+      dataIndex: 'updatetime',
       valueType: 'dateTime',
       hideInForm: true,
     },
@@ -293,14 +305,10 @@ const TableList: React.FC = () => {
       ],
     },
   ];
-
   return (
     <PageContainer>
       <ProTable<API.RuleListItem, API.PageParams>
-        headerTitle={intl.formatMessage({
-          id: 'pages.searchTable.title',
-          defaultMessage: 'Enquiry form',
-        })}
+        headerTitle={'查询表格'}
         actionRef={actionRef}
         rowKey="key"
         search={{
@@ -314,11 +322,13 @@ const TableList: React.FC = () => {
               handleModalOpen(true);
             }}
           >
-            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
+            <PlusOutlined /> 新建
           </Button>,
         ]}
         request={async (params: { pageSize?: number; current?: number; keyword?: string }) => {
-          const res = await listInterfaceInfoByPageUsingGET({ ...params });
+          const res = await listInterfaceInfoByPageUsingGET({
+            ...params,
+          });
           if (res.data) {
             return {
               data: res.data.records || [],
@@ -344,17 +354,17 @@ const TableList: React.FC = () => {
         <FooterToolbar
           extra={
             <div>
-              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
-              <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
-              &nbsp;&nbsp;
+              已选择{' '}
+              <a
+                style={{
+                  fontWeight: 600,
+                }}
+              >
+                {selectedRowsState.length}
+              </a>{' '}
+              项 &nbsp;&nbsp;
               <span>
-                <FormattedMessage
-                  id="pages.searchTable.totalServiceCalls"
-                  defaultMessage="Total number of service calls"
-                />{' '}
-                {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)}{' '}
-                <FormattedMessage id="pages.searchTable.tenThousand" defaultMessage="万" />
+                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)} 万
               </span>
             </div>
           }
@@ -366,24 +376,13 @@ const TableList: React.FC = () => {
               actionRef.current?.reloadAndRest?.();
             }}
           >
-            <FormattedMessage
-              id="pages.searchTable.batchDeletion"
-              defaultMessage="Batch deletion"
-            />
+            批量删除
           </Button>
-          <Button type="primary">
-            <FormattedMessage
-              id="pages.searchTable.batchApproval"
-              defaultMessage="Batch approval"
-            />
-          </Button>
+          <Button type="primary">批量审批</Button>
         </FooterToolbar>
       )}
       <ModalForm
-        title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newRule',
-          defaultMessage: 'New rule',
-        })}
+        title={'新建规则'}
         width="400px"
         open={createModalOpen}
         onOpenChange={handleModalOpen}
@@ -401,12 +400,7 @@ const TableList: React.FC = () => {
           rules={[
             {
               required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
+              message: '规则名称为必填项',
             },
           ]}
           width="md"
@@ -490,5 +484,4 @@ const TableList: React.FC = () => {
     </PageContainer>
   );
 };
-
 export default TableList;
