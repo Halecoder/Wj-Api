@@ -1,7 +1,7 @@
 package com.hl.project.service;
 
-import com.hl.project.model.entity.UserInterfaceInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.hl.project.model.entity.UserInterfaceInfo;
 
 /**
 * @author HL

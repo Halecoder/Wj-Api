@@ -16,7 +16,7 @@ public class WjApiClientConfig {
     private String secretKey;
 
     @Bean
-    public WJApiClient xuanApiClient() {
+    public WJApiClient wjApiClient() {
         return new WJApiClient(accessKey, secretKey);
     }
 }

@@ -1,10 +1,10 @@
 package com.hl.project.rpc.impl;
 
 import com.hl.project.rpc.RpcDemoService;
-import org.apache.dubbo.config.annotation.DubboService;
+import org.apache.dubbo.config.annotation.Service;
 import org.apache.dubbo.rpc.RpcContext;
 
-@DubboService
+@Service(version = "${dubbo.service.version}")
 public class RpcDemoServiceImpl implements RpcDemoService {
     @Override
     public String sayHello(String name) {

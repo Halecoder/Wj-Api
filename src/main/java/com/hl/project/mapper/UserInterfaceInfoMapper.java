@@ -1,7 +1,8 @@
 package com.hl.project.mapper;
 
-import com.hl.project.model.entity.UserInterfaceInfo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.hl.project.model.entity.UserInterfaceInfo;
 
 /**
 * @author HL
