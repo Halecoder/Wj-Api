@@ -14,3 +14,7 @@ logging:
   level:
     org.springframework.cloud.gateway: TRACE  #???????
 
+
+
+
+

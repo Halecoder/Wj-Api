@@ -1,4 +1,4 @@
-package com.hl.wjapigateway.filter;
+package com.hl.project.filter;
 
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
@@ -40,6 +40,7 @@ import java.util.List;
 public class CustomGlobalFilter implements GlobalFilter, Ordered {
     private static final List<String> IP_WHITE_LIST = Arrays.asList("127.0.0.1", "127.0.0.2");
     private static final long FIVE_MINUTES = 5 * 60 * 1000;
+    private static final String INTERFACE_HOST =  "http://localhost:8080";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -68,18 +69,22 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         String sign = headers.getFirst("sign");
         String body = headers.getFirst("body");
         // todo 实际情况应该是去数据库中查是否已分配给用户
-        User invokeUser = null;
-        try {
-            invokeUser = innerUserService.getInvokeUser(accessKey);
-        } catch (Exception e) {
-            log.error("getInvokeUser error", e);
-        }
-        if (invokeUser == null) {
-            return handleNoAuth(response);
-        }
+//        User invokeUser = null;
+//        try {
+//            invokeUser = innerUserService.getInvokeUser(accessKey);
+//        } catch (Exception e) {
+//            log.error("getInvokeUser error", e);
+//        }
+//        if (invokeUser == null) {
+//            return handleNoAuth(response);
+//        }
+
+
 //        if (!"yupi".equals(accessKey)) {
 //            return handleNoAuth(response);
 //        }
+
+
         if (Long.parseLong(nonce) > 10000L) {
             return handleNoAuth(response);
         }
@@ -90,26 +95,27 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             return handleNoAuth(response);
         }
         // 实际情况中是从数据库中查出 secretKey
-        String secretKey = invokeUser.getSecretKey();
-        String serverSign = SignUtils.genSign(body, secretKey);
-        if (sign == null || !sign.equals(serverSign)) {
-            return handleNoAuth(response);
-        }
+//        String secretKey = invokeUser.getSecretKey();
+//        String serverSign = SignUtils.genSign(body, secretKey);
+//        if (sign == null || !sign.equals(serverSign)) {
+//            return handleNoAuth(response);
+//        }
         // 4. 请求的模拟接口是否存在，以及请求方法是否匹配
-        InterfaceInfo interfaceInfo = null;
-        try {
-            interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(path, method);
-        } catch (Exception e) {
-            log.error("getInterfaceInfo error", e);
-        }
-        if (interfaceInfo == null) {
-            return handleNoAuth(response);
-        }
+//        InterfaceInfo interfaceInfo = null;
+//        try {
+//            interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(path, method);
+//        } catch (Exception e) {
+//            log.error("getInterfaceInfo error", e);
+//        }
+//        if (interfaceInfo == null) {
+//            return handleNoAuth(response);
+//        }
         // todo 是否还有调用次数
         // 5. 请求转发，调用模拟接口 + 响应日志
         //        Mono<Void> filter = chain.filter(exchange);
         //        return filter;
-        return handleResponse(exchange, chain, interfaceInfo.getId(), invokeUser.getId());
+//        return handleResponse(exchange, chain, interfaceInfo.getId(), invokeUser.getId());
+        return handleResponse(exchange, chain, 1, 1);
     }
 
     /**
@@ -141,7 +147,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                                     fluxBody.map(dataBuffer -> {
                                         // 7. 调用成功，接口调用次数 + 1 invokeCount
                                         try {
-                                            innerUserInterfaceInfoService.invokeCount(interfaceInfoId, userId);
+//                                            innerUserInterfaceInfoService.invokeCount(interfaceInfoId, userId);
                                         } catch (Exception e) {
                                             log.error("invokeCount error", e);
                                         }
