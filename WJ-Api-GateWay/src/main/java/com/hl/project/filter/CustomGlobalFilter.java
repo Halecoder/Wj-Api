@@ -2,6 +2,8 @@ package com.hl.project.filter;
 
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+import com.hl.model.InvokeInterfaceRequest;
 import com.hl.project.model.entity.InterfaceInfo;
 import com.hl.project.model.entity.User;
 import com.hl.project.service.InnerInterfaceInfoService;
@@ -59,18 +61,17 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
     private static final long FIVE_MINUTES = 5 * 60 * 1000L;
 
-    private static final String INTERFACE_HOST = "http://localhost:8080";
+//    private static final String INTERFACE_HOST = "http://localhost:8080";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 1. 请求日志
         ServerHttpRequest request = exchange.getRequest();
-        String path = INTERFACE_HOST + request.getPath().value();
         String method = Objects.requireNonNull(request.getMethod()).toString();
         log.info("请求id: {}", request.getId());
-        log.info("请求路径: {}", path);
         log.info("请求方法: {}", method);
         log.info("请求参数: {}", request.getQueryParams());
+        log.info("请求体: {}", request.getBody());
         log.info("请求头: {}", request.getHeaders());
         String remoteAddress = Objects.requireNonNull(request.getRemoteAddress()).getHostString();
         log.info("请求地址: {}", remoteAddress);
@@ -91,6 +92,15 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+
+//        String host = getHost(body, method);
+//
+//        if (StrUtil.isBlank(host)) {
+//            return handleInvokeError(response);
+//        }
+//        //获取请求头
+//        String path = host + request.getPath().value();
+
         String sign = headers.getFirst("sign");
         String nonce = headers.getFirst("nonce");
         String timestamp = headers.getFirst("timestamp");
@@ -111,6 +121,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         }
         String secretKey = invokeUser.getSecretKey();
         String sign1 = SignUtils.genSign(body, secretKey);
+
         if (!StrUtil.equals(sign, sign1)) {
             return handleInvokeError(response);
         }
@@ -123,10 +134,13 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         if (System.currentTimeMillis() - Long.parseLong(timestamp) > FIVE_MINUTES) {
             return handleInvokeError(response);
         }
+        //body是json字符串 转换成对象
+        InvokeInterfaceRequest invokeInterfaceRequest = JSONUtil.toBean(body, InvokeInterfaceRequest.class);
+        //根据id查询接口信息
         // 4. 请求的模拟接口是否存在
         InterfaceInfo invokeInterfaceInfo = null;
         try {
-            invokeInterfaceInfo = innerInterfaceInfoService.getInvokeInterfaceInfo(path, method);
+            invokeInterfaceInfo = innerInterfaceInfoService.getInvokeInterfaceInfoById(invokeInterfaceRequest.getId(), method);
         } catch (Exception e) {
             log.error("getInvokeInterfaceInfo error", e);
         }
@@ -224,5 +238,22 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         return response.setComplete();
     }
 
+    //获取服务地址
+    private String getHost(String body, String method) {
+        //body是json字符串 转换成对象
+        InvokeInterfaceRequest invokeInterfaceRequest = JSONUtil.toBean(body, InvokeInterfaceRequest.class);
+        //根据id查询接口信息
+        InterfaceInfo invokeInterfaceInfo = null;
+try {
+            invokeInterfaceInfo = innerInterfaceInfoService.getInvokeInterfaceInfoById(invokeInterfaceRequest.getId(), method);
+        } catch (Exception e) {
+            log.error("getInvokeInterfaceInfo error", e);
+        }
+        if (invokeInterfaceInfo == null) {
+            return null;
+        }
+        return invokeInterfaceInfo.getHost();
+
+    }
 }
 

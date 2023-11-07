@@ -27,4 +27,16 @@ public class InnerInterfaceInfoServiceImpl implements InnerInterfaceInfoService 
         return interfaceInfoMapper.selectOne(lambdaQueryWrapper);
     }
 
+    @Override
+    public InterfaceInfo getInvokeInterfaceInfoById(Long id, String method) {
+        if (id == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        LambdaQueryWrapper<InterfaceInfo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(InterfaceInfo::getId,id).eq(InterfaceInfo::getMethod, method);
+        return interfaceInfoMapper.selectOne(lambdaQueryWrapper);
+    }
+
+
+
 }

@@ -60,4 +60,9 @@ public class InterfaceInfoQueryRequest extends PageRequest implements Serializab
      */
     private Long userId;
 
+    /**
+     * 服务器地址
+     */
+    private String host;
+
 }

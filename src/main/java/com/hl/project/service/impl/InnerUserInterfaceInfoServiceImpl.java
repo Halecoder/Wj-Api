@@ -48,7 +48,7 @@ public class InnerUserInterfaceInfoServiceImpl implements InnerUserInterfaceInfo
         updateWrapper.eq(UserInterfaceInfo::getUserId, userId)
                 .eq(UserInterfaceInfo::getInterfaceInfoId, interfaceInfoId)
                 .gt(UserInterfaceInfo::getLeftNum, 0)
-                .setSql("left_num = left_num -1, total_num = total_num + 1");
+                .setSql("leftNum = leftNum -1, totalNum = totalNum + 1");
 
         int updateCount = userInterfaceInfoMapper.update(null, updateWrapper);
         return updateCount > 0;

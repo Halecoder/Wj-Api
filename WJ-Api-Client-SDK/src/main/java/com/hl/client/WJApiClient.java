@@ -3,10 +3,12 @@ package com.hl.client;
 
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import com.hl.model.InvokeInterfaceRequest;
 import com.hl.model.User;
 import com.hl.utils.SignUtils;
 
@@ -32,21 +34,6 @@ public class WJApiClient {
         this.secretKey = secretKey;
     }
 
-
-    public String getNameByPostWithJson(User user) throws UnsupportedEncodingException {
-        String json = JSONUtil.toJsonStr(user);
-        HttpResponse response = HttpRequest.post(GATEWAY_HOST + "/api/name/user")
-                .addHeaders(getHeaders(json))
-                .body(json)
-                .execute();
-        System.out.println("response = " + response);
-        System.out.println("status = " + response.getStatus());
-        if (response.isOk()) {
-            return response.body();
-        }
-        return "fail";
-    }
-
     private Map<String, String> getHeaders(String body) throws UnsupportedEncodingException {
         Map<String, String> header = new HashMap<>();
         header.put("accessKey", accessKey);
@@ -58,4 +45,41 @@ public class WJApiClient {
         return header;
     }
 
+    public String getNameByPostWithJson(User user) throws UnsupportedEncodingException {
+        String json = JSONUtil.toJsonStr(user);
+        HttpResponse response = HttpRequest.post(GATEWAY_HOST+"/api/name/user")
+                .addHeaders(getHeaders(json))
+                .body(json)
+                .execute();
+        System.out.println("response = " + response);
+        System.out.println("status = " + response.getStatus());
+        if (response.isOk()) {
+            return response.body();
+        }
+        return "fail";
+    }
+
+
+    public String postResultByInvoke(InvokeInterfaceRequest invokeInterfaceRequest,String method) throws UnsupportedEncodingException {
+        String json = JSONUtil.toJsonStr(invokeInterfaceRequest);
+        HttpResponse response = null;
+        if (StrUtil.equals(method, "POST",true)){
+            response = HttpRequest.post(GATEWAY_HOST + "/api/invoke")
+                    .addHeaders(getHeaders(json))
+                    .body(json)
+                    .execute();
+        }else{
+            response = HttpRequest.get(GATEWAY_HOST + "/api/invoke")
+                    .addHeaders(getHeaders(json))
+                    .body(json)
+                    .execute();
+        }
+
+        System.out.println("response = " + response);
+        System.out.println("status = " + response.getStatus());
+        if (response.isOk()) {
+            return response.body();
+        }
+        return "fail";
+    }
 }

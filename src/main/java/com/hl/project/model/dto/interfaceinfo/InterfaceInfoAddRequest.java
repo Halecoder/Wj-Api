@@ -47,4 +47,9 @@ public class InterfaceInfoAddRequest implements Serializable {
      */
     private String method;
 
+    /**
+     * 服务器地址
+     */
+    private String host;
+
 }

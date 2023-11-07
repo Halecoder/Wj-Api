@@ -5,10 +5,25 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: api_route
+        - id: api_self
           uri: http://localhost:8080
           predicates:
-            - Path=/api/**
+            - Method=POST
+            - Path=/api/invoke/**
+          filters:
+            - StripPrefix=2
+            - PrefixPath=/api/name/user
+
+        - id: api_other
+          uri: https://v1.hitokoto.cn
+          predicates:
+            - Method=GET
+            - Path=/api/invoke/**
+          filters:
+            - StripPrefix=2
+            - PrefixPath=/
+
+
 
 logging:
   level:

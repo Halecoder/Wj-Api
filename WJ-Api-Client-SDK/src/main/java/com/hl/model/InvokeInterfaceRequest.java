@@ -1,4 +1,4 @@
-package com.hl.project.model.dto.interfaceinfo;
+package com.hl.model;
 
 import lombok.Data;
 

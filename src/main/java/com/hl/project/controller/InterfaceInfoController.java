@@ -195,6 +195,7 @@ public class InterfaceInfoController {
         interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
         boolean isSuccessful = interfaceInfoService.updateById(interfaceInfo);
         return ResultUtils.success(isSuccessful);
+
     }
 
     /**
@@ -215,6 +216,7 @@ public class InterfaceInfoController {
         if (oldInterfaceInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
+
         // 更新数据库
         InterfaceInfo interfaceInfo = new InterfaceInfo();
         interfaceInfo.setId(id);
@@ -248,11 +250,22 @@ public class InterfaceInfoController {
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
         WJApiClient client = new WJApiClient(accessKey, secretKey);
-        // 先写死请求
-        String userRequestParams = invokeInterfaceRequest.getRequestParams();
-        com.hl.model.User user = JSONUtil.toBean(userRequestParams, com.hl.model.User.class);
-        String result = client.getNameByPostWithJson(user);
+
+        //获取method
+        String method = interfaceInfo.getMethod();
+        //invokeInterfaceRequest赋值给 com.hl.model.InvokeInterfaceRequest
+        com.hl.model.InvokeInterfaceRequest tempRequest = new com.hl.model.InvokeInterfaceRequest();
+        BeanUtils.copyProperties(invokeInterfaceRequest, tempRequest);
+        String result = client.postResultByInvoke(tempRequest,method);
         return ResultUtils.success(result);
+
+
+
+        // 先写死请求
+//        String userRequestParams = invokeInterfaceRequest.getRequestParams();
+//        com.hl.model.User user = JSONUtil.toBean(userRequestParams, com.hl.model.User.class);
+//        String result = client.getNameByPostWithJson(user);
+//        return ResultUtils.success(result);
     }
 
     /**

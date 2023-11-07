@@ -82,6 +82,11 @@ public class InterfaceInfo implements Serializable {
      */
     private Integer isdelete;
 
+    /**
+     * 服务器地址
+     */
+    private String host;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
