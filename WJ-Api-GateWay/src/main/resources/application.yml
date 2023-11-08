@@ -1,33 +1,68 @@
 server:
   port: 8090
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
 
 spring:
   cloud:
     gateway:
-      routes:
-        - id: api_self
-          uri: http://localhost:8080
-          predicates:
-            - Method=POST
-            - Path=/api/invoke/**
-          filters:
-            - StripPrefix=2
-            - PrefixPath=/api/name/user
+      httpserver:
+        wiretap: true
+      httpclient:
+        wiretap: true
 
-        - id: api_other
-          uri: https://v1.hitokoto.cn
-          predicates:
-            - Method=GET
-            - Path=/api/invoke/**
-          filters:
-            - StripPrefix=2
-            - PrefixPath=/
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: api_self
+#          uri: http://localhost:8080
+#          predicates:
+#            - Method=POST
+#            - Path=/21/**
+#          filters:
+#            - StripPrefix=1
+#            - PrefixPath=/api/name/get
+#
+#        - id: api_other
+#          uri: https://v1.hitokoto.cn
+#          predicates:
+#            - Method=GET
+#            - Path=/22/**
+#          filters:
+#            - StripPrefix=1
+#            - PrefixPath=/
 
+  datasource:
+    password: 20020829
+    url: jdbc:mysql://localhost:3306/wj_api?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+
+  redis:
+    host: 117.50.194.150
+    port: 6379
+    password: 20020829
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:/mapper/*.xml
 
 
 logging:
   level:
-    org.springframework.cloud.gateway: TRACE  #???????
+    org.springframework.cloud.gateway: trace
+    org.springframework.cloud.loadbalancer: trace
+    org.springframework.web.reactive: trace
+
+
 
 
 nacos:

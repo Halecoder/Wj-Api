@@ -60,16 +60,17 @@ public class WJApiClient {
     }
 
 
-    public String postResultByInvoke(InvokeInterfaceRequest invokeInterfaceRequest,String method) throws UnsupportedEncodingException {
+    public String postResultByInvoke(InvokeInterfaceRequest invokeInterfaceRequest,String method,String uri) throws UnsupportedEncodingException {
         String json = JSONUtil.toJsonStr(invokeInterfaceRequest);
+        String id = String.valueOf(invokeInterfaceRequest.getId()); //id用来区分不同的服务
         HttpResponse response = null;
         if (StrUtil.equals(method, "POST",true)){
-            response = HttpRequest.post(GATEWAY_HOST + "/api/invoke")
+            response = HttpRequest.post(GATEWAY_HOST + '/'+ id + uri)
                     .addHeaders(getHeaders(json))
                     .body(json)
                     .execute();
         }else{
-            response = HttpRequest.get(GATEWAY_HOST + "/api/invoke")
+            response = HttpRequest.get(GATEWAY_HOST +'/'+ id + uri)
                     .addHeaders(getHeaders(json))
                     .body(json)
                     .execute();
@@ -77,9 +78,9 @@ public class WJApiClient {
 
         System.out.println("response = " + response);
         System.out.println("status = " + response.getStatus());
-        if (response.isOk()) {
+//        if (response.isOk()) {
             return response.body();
-        }
-        return "fail";
+//        }
+//        return "fail";
     }
 }

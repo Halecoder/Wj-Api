@@ -24,12 +24,17 @@ import java.nio.charset.StandardCharsets;
  */
 
 @RestController
-@RequestMapping("/name")
+@RequestMapping("/api/name")
 public class NameController {
 
     @PostMapping("/test")
     public String test(@RequestParam String name) {
         return "test" + name;
+    }
+
+    @GetMapping("/get")
+    public String test() {
+        return "test" ;
     }
 
     @PostMapping("/user")

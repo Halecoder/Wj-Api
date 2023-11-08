@@ -1,5 +1,7 @@
 package com.hl.project.controller;
 
+import cn.hutool.core.util.URLUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -256,10 +258,12 @@ public class InterfaceInfoController {
         //invokeInterfaceRequest赋值给 com.hl.model.InvokeInterfaceRequest
         com.hl.model.InvokeInterfaceRequest tempRequest = new com.hl.model.InvokeInterfaceRequest();
         BeanUtils.copyProperties(invokeInterfaceRequest, tempRequest);
-        String result = client.postResultByInvoke(tempRequest,method);
+        //获取url
+        String url = interfaceInfo.getUrl();
+        //hutool处理url得到URI
+        String uri = URLUtil.getPath(url);
+        String result = client.postResultByInvoke(tempRequest,method,uri);
         return ResultUtils.success(result);
-
-
 
         // 先写死请求
 //        String userRequestParams = invokeInterfaceRequest.getRequestParams();

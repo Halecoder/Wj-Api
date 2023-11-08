@@ -1,9 +1,31 @@
 server:
   port: 8080
-  servlet:
-    context-path: /api
+
 wj:
   api:
     client:
       access-key: wjapi
       secret-key: abc
+
+# 暴露端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+
+
+nacos:
+  service-address: localhost
+  port: 8848
+dubbo:
+  service:
+    version: 1.0.0
+  application:
+    name: wj-api-interface-provider
+  registry:
+    address: nacos://${nacos.service-address}:${nacos.port}

@@ -18,15 +18,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @Configuration
 @EnableSwagger2
-@Profile("dev")
 public class Knife4jConfig {
 
     @Bean
     public Docket defaultApi2() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder()
-                        .title("project-backend")
-                        .description("project-backend")
+                        .title("gateway-backend")
+                        .description("gateway-backend")
                         .version("1.0")
                         .build())
                 .select()

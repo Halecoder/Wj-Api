@@ -57,7 +57,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     @Reference(version = "${dubbo.service.version}", check = false)
     private InnerUserInterfaceInfoService innerUserInterfaceInfoService;
 
-    private static final List<String> IP_WHITE_LIST = Arrays.asList("127.0.0.1", "127.0.0.2");
+    private static final List<String> IP_WHITE_LIST = Arrays.asList("127.0.0.1", "127.0.0.2","0:0:0:0:0:0:0:1");
 
     private static final long FIVE_MINUTES = 5 * 60 * 1000L;
 
@@ -65,6 +65,13 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
+        //排除不需要过滤的请求路径
+        String path = exchange.getRequest().getURI().getPath();
+        if (path.contains("/api-docs") || path.contains("/v3/api-docs") || path.contains("/doc.html")) {
+            return chain.filter(exchange);
+        }
+
         // 1. 请求日志
         ServerHttpRequest request = exchange.getRequest();
         String method = Objects.requireNonNull(request.getMethod()).toString();
@@ -158,7 +165,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -1;
+        return -3;
     }
 
     /**
