@@ -219,6 +219,19 @@ const TableList: React.FC = () => {
       },
     },
     {
+      title: '服务地址',
+      dataIndex: 'host',
+      valueType: 'text',
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: 'host地址为必填项',
+          },
+        ],
+      },
+    },
+    {
       title: '请求头',
       dataIndex: 'requestheader',
       valueType: 'textarea',

@@ -67,6 +67,7 @@ const InterfaceInfo: React.FC = () => {
                 )}
               </Descriptions.Item>
               <Descriptions.Item label="请求地址">{data.url}</Descriptions.Item>
+              <Descriptions.Item label="服务地址">{data.host}</Descriptions.Item>
               <Descriptions.Item label="请求方法">{data.method}</Descriptions.Item>
               <Descriptions.Item label="请求头">{data.requestheader}</Descriptions.Item>
               <Descriptions.Item label="请求参数">{data.requestparams}</Descriptions.Item>

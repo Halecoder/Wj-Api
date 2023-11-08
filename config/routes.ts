@@ -22,8 +22,6 @@ export default [
     name: '管理页',
     access: 'canAdmin',
     routes: [
-      { path: '/admin', name: '子页', redirect: '/admin/sub-page' },
-      { path: '/admin/sub-page', name: '二级子页', component: './Admin' },
       {
         name: '接口管理',
         icon: 'table',
