@@ -18,5 +18,7 @@ public interface GatewayRouteMapper {
 
     int updateByPrimaryKey(GatewayRoute record);
 
+    int updateByServiceId(GatewayRoute record);
+
     List<GatewayRoute> queryAllRoutes();
 }

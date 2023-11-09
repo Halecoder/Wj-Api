@@ -1,5 +1,8 @@
 package com.hl.project.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface RankService {
@@ -14,4 +17,5 @@ public interface RankService {
     double zGetScore(String value);
 
 
+    List<HashMap<String,Object>> zReverseRangeWithScore();
 }

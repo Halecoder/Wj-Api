@@ -6,7 +6,7 @@ import org.apache.dubbo.config.annotation.Service;
 import org.springframework.data.redis.core.ZSetOperations;
 
 import javax.annotation.Resource;
-import java.util.Set;
+import java.util.*;
 
 @Service(version = "${dubbo.service.version}")
 public class RankServiceImpl implements RankService {
@@ -45,6 +45,25 @@ public class RankServiceImpl implements RankService {
     @Override
     public double zGetScore(String value) {
         return redisUtil.zGetScoreByValue(key, value);
+    }
+
+    /**
+     * @param
+     * @return
+     *  获取排行榜
+     */
+    @Override
+    public List<HashMap<String,Object>> zReverseRangeWithScore() {
+        Set<ZSetOperations.TypedTuple<Object>> sets =  redisUtil.zReverseRangeWithScore(key);
+        List<HashMap<String,Object>> map = new ArrayList<>();
+        for (ZSetOperations.TypedTuple<Object> set : sets) {
+            HashMap<String,Object> hashMap = new HashMap<>();
+            hashMap.put("value",set.getValue());
+            hashMap.put("score",set.getScore());
+            map.add(hashMap);
+        }
+        return map;
+
     }
 
 }

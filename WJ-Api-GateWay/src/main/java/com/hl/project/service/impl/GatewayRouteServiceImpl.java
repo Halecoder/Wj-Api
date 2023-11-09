@@ -50,7 +50,7 @@ public class GatewayRouteServiceImpl implements InnerGatewayRouteService {
         BeanUtils.copyProperties(gatewayRouteDto, gatewayRoute);
         gatewayRoute.setUpdateDate(new Date());
         gatewayRoute.setUpdateId("");
-        return gatewayRouteMapper.updateByPrimaryKeySelective(gatewayRoute);
+        return gatewayRouteMapper.updateByServiceId(gatewayRoute);
     }
 
     @Override

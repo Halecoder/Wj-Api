@@ -180,4 +180,20 @@
       del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+    <update id="updateByServiceId">
+      update gateway_route
+      set service_id = #{serviceId,jdbcType=VARCHAR},
+      uri = #{uri,jdbcType=VARCHAR},
+      predicates = #{predicates,jdbcType=VARCHAR},
+      filters = #{filters,jdbcType=VARCHAR},
+      order_ = #{order,jdbcType=VARCHAR},
+      creator_id = #{creatorId,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_id = #{updateId,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=CHAR}
+      where service_id = #{serviceId,jdbcType=VARCHAR}
+    </update>
 </mapper>

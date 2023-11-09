@@ -338,7 +338,7 @@ public class InterfaceInfoController {
         gatewayRoute.setPredicates("/"+interfaceInfo.getId()+uri+"/**");
         gatewayRoute.setFilters("1");
         gatewayRoute.setOrder("0");
-
+        gatewayRoute.setDelFlag("0");
         gatewayRoute.setRemarks(interfaceInfo.getDescription());
         return gatewayRoute;
     }
