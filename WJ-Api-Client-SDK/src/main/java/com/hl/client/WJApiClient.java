@@ -23,15 +23,18 @@ import static com.hl.utils.SignUtils.genSign;
 public class WJApiClient {
 
     //走网关 进行相关处理，比如鉴权、限流、熔断、负载均衡、API调用统计等 网关处理后再转发回来进行业务处理
-    private static final String GATEWAY_HOST = "http://localhost:8090";
+
+
+    private String gatewayHost;
 
     private String accessKey;
 
     private String secretKey;
 
-    public WJApiClient(String accessKey, String secretKey) {
+    public WJApiClient(String accessKey, String secretKey,String gatewayHost) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
+        this.gatewayHost = gatewayHost;
     }
 
     private Map<String, String> getHeaders(String body) throws UnsupportedEncodingException {
@@ -47,7 +50,7 @@ public class WJApiClient {
 
     public String getNameByPostWithJson(User user) throws UnsupportedEncodingException {
         String json = JSONUtil.toJsonStr(user);
-        HttpResponse response = HttpRequest.post(GATEWAY_HOST+"/api/name/user")
+        HttpResponse response = HttpRequest.post(gatewayHost+"/api/name/user")
                 .addHeaders(getHeaders(json))
                 .body(json)
                 .execute();
@@ -65,12 +68,12 @@ public class WJApiClient {
         String id = String.valueOf(invokeInterfaceRequest.getId()); //id用来区分不同的服务
         HttpResponse response = null;
         if (StrUtil.equals(method, "POST",true)){
-            response = HttpRequest.post(GATEWAY_HOST + '/'+ id + uri)
+            response = HttpRequest.post(gatewayHost + '/'+ id + uri)
                     .addHeaders(getHeaders(json))
                     .body(json)
                     .execute();
         }else{
-            response = HttpRequest.get(GATEWAY_HOST +'/'+ id + uri)
+            response = HttpRequest.get(gatewayHost +'/'+ id + uri)
                     .addHeaders(getHeaders(json))
                     .body(json)
                     .execute();

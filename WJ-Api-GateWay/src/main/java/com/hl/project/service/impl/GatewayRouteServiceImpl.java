@@ -55,7 +55,7 @@ public class GatewayRouteServiceImpl implements InnerGatewayRouteService {
 
     @Override
     public Integer delete(String id) {
-        return gatewayRouteMapper.deleteByPrimaryKey(Long.parseLong(id));
+        return gatewayRouteMapper.deleteByServiceId(Long.parseLong(id));
     }
 
     @Override

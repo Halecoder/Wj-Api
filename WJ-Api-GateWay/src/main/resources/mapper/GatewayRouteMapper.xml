@@ -31,9 +31,9 @@
     from gateway_route where del_flag=0
   </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByServiceId" parameterType="java.lang.Long" >
     delete from gateway_route
-    where id = #{id,jdbcType=BIGINT}
+    where service_id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.hl.project.model.entity.GatewayRoute" >
     insert into gateway_route (id, service_id, uri, 

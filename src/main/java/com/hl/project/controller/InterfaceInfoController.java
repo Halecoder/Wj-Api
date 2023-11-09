@@ -10,6 +10,7 @@ import com.hl.project.common.*;
 import com.hl.project.constant.CommonConstant;
 import com.hl.project.exception.BusinessException;
 
+import com.hl.project.model.dto.GatewayRouteDto;
 import com.hl.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
 import com.hl.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.hl.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -44,6 +46,10 @@ public class InterfaceInfoController {
 
     @Resource
     private WJApiClient wjApiClient;
+
+    @Value("${gateway.host}")
+    private String gatewayHost;
+
 
     @Reference(version = "${dubbo.service.version}",check=false)
     private InnerGatewayRouteService innerGateWayService;
@@ -72,6 +78,8 @@ public class InterfaceInfoController {
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
+        //添加路由
+        innerGateWayService.add(getGatewayRoute(interfaceInfo));
         long newInterfaceInfoId = interfaceInfo.getId();
         return ResultUtils.success(newInterfaceInfoId);
     }
@@ -100,6 +108,10 @@ public class InterfaceInfoController {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         boolean b = interfaceInfoService.removeById(id);
+        if(b){
+            //删除路由
+            innerGateWayService.delete(String.valueOf(deleteRequest.getId()));
+        }
         return ResultUtils.success(b);
     }
 
@@ -132,6 +144,8 @@ public class InterfaceInfoController {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         boolean result = interfaceInfoService.updateById(interfaceInfo);
+        //更新路由
+        innerGateWayService.update(getGatewayRoute(interfaceInfo));
         return ResultUtils.success(result);
     }
 
@@ -186,15 +200,15 @@ public class InterfaceInfoController {
         if (oldInterfaceInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        // 判断接口是否能使用
-        // TODO 根据测试地址来调用
-        // 这里我先用固定的方法进行测试，后面来改
-        com.hl.model.User user = new com.hl.model.User();
-        user.setUsername("MARS");
-        String name = wjApiClient.getNameByPostWithJson(user);
-        if (StrUtil.isBlank(name)) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
-        }
+//        // 判断接口是否能使用
+//        // TODO 根据测试地址来调用
+//        // 这里我先用固定的方法进行测试，后面来改
+//        com.hl.model.User user = new com.hl.model.User();
+//        user.setUsername("MARS");
+//        String name = wjApiClient.getNameByPostWithJson(user);
+//        if (StrUtil.isBlank(name)) {
+//            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
+//        }
         // 更新数据库
         InterfaceInfo interfaceInfo = new InterfaceInfo();
         interfaceInfo.setId(id);
@@ -255,7 +269,7 @@ public class InterfaceInfoController {
         User loginUser = userService.getLoginUser(request);
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
-        WJApiClient client = new WJApiClient(accessKey, secretKey);
+        WJApiClient client = new WJApiClient(accessKey, secretKey,gatewayHost);
 
         //获取method
         String method = interfaceInfo.getMethod();
@@ -267,8 +281,6 @@ public class InterfaceInfoController {
         //hutool处理url得到URI
         String uri = URLUtil.getPath(url);
         String result = client.postResultByInvoke(tempRequest,method,uri);
-        List<GatewayRoute> gatewayRoutes =  innerGateWayService.queryAllRoutes();
-        System.out.println(gatewayRoutes);
         return ResultUtils.success(result);
 
         // 先写死请求
@@ -309,6 +321,26 @@ public class InterfaceInfoController {
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size), queryWrapper);
         return ResultUtils.success(interfaceInfoPage);
+    }
+
+
+    /**
+     * 组装路由配置信息
+     * @return GatewayRoute
+     */
+    private GatewayRouteDto getGatewayRoute(InterfaceInfo interfaceInfo) {
+        GatewayRouteDto gatewayRoute = new GatewayRouteDto();
+        //用于ServiceId删除路由
+        gatewayRoute.setServiceId(String.valueOf(interfaceInfo.getId()));
+        gatewayRoute.setUri(interfaceInfo.getHost());
+        //hutool处理url得到URI
+        String uri = URLUtil.getPath(interfaceInfo.getUrl());
+        gatewayRoute.setPredicates("/"+interfaceInfo.getId()+uri+"/**");
+        gatewayRoute.setFilters("1");
+        gatewayRoute.setOrder("0");
+
+        gatewayRoute.setRemarks(interfaceInfo.getDescription());
+        return gatewayRoute;
     }
 
 }

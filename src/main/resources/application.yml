@@ -52,5 +52,10 @@ dubbo:
   scan:
     base-packages: com.hl.project.*.impl
 
+# 网关配置
+gateway:
+  host: localhost:8090
+
+
 
 

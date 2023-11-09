@@ -6,7 +6,7 @@ import com.hl.project.model.entity.GatewayRoute;
 import java.util.List;
 
 public interface GatewayRouteMapper {
-    int deleteByPrimaryKey(Long id);
+    int deleteByServiceId(Long id);
 
     int insert(GatewayRoute record);
 

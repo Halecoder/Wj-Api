@@ -154,10 +154,10 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         if (invokeInterfaceInfo == null) {
             return handleInvokeError(response);
         }
-        //  是否有调用次数
-        if (!innerUserInterfaceInfoService.hasInvokeNum(invokeUser.getId(), invokeInterfaceInfo.getId())) {
-            return handleInvokeError(response);
-        }
+        //TODO 暂时测试关闭  是否有调用次数
+//        if (!innerUserInterfaceInfoService.hasInvokeNum(invokeUser.getId(), invokeInterfaceInfo.getId())) {
+//            return handleInvokeError(response);
+//        }
         // 5. 请求转发，调用模拟接口
         return handleResponse(exchange, chain, invokeUser.getId(), invokeInterfaceInfo.getId());
 

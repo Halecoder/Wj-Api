@@ -14,9 +14,10 @@ import org.springframework.context.annotation.Configuration;
 public class WjApiClientConfig {
     private String accessKey;
     private String secretKey;
+    private String gatewayHost;
 
     @Bean
     public WJApiClient wjApiClient() {
-        return new WJApiClient(accessKey, secretKey);
+        return new WJApiClient(accessKey, secretKey,gatewayHost);
     }
 }
