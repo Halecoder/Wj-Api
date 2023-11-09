@@ -1,8 +1,6 @@
 package com.hl.project.controller;
 
 import cn.hutool.core.util.URLUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.core.util.StrUtil;
@@ -16,13 +14,16 @@ import com.hl.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
 import com.hl.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.hl.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.hl.project.model.dto.interfaceinfo.InvokeInterfaceRequest;
+import com.hl.project.model.entity.GatewayRoute;
 import com.hl.project.model.entity.InterfaceInfo;
 import com.hl.project.model.entity.User;
 import com.hl.project.model.enums.InterfaceInfoStatusEnum;
+import com.hl.project.service.InnerGatewayRouteService;
 import com.hl.project.service.InterfaceInfoService;
 import com.hl.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,9 @@ public class InterfaceInfoController {
 
     @Resource
     private WJApiClient wjApiClient;
+
+    @Reference(version = "${dubbo.service.version}",check=false)
+    private InnerGatewayRouteService innerGateWayService;
 
     // region 增删改查
 
@@ -263,6 +267,8 @@ public class InterfaceInfoController {
         //hutool处理url得到URI
         String uri = URLUtil.getPath(url);
         String result = client.postResultByInvoke(tempRequest,method,uri);
+        List<GatewayRoute> gatewayRoutes =  innerGateWayService.queryAllRoutes();
+        System.out.println(gatewayRoutes);
         return ResultUtils.success(result);
 
         // 先写死请求

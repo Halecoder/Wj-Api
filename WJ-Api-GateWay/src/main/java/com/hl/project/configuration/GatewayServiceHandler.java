@@ -3,10 +3,9 @@ package com.hl.project.configuration;
 import com.alibaba.fastjson.JSON;
 
 import com.hl.project.dao.GatewayRouteMapper;
-import com.hl.project.entity.GatewayRoute;
+import com.hl.project.model.entity.GatewayRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
@@ -14,10 +13,11 @@ import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.Resource;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,12 +30,12 @@ import java.util.Map;
  * 核心配置类，项目初始化加载数据库的路由配置
  *
  */
-@Service
+@Component
 public class GatewayServiceHandler implements ApplicationEventPublisherAware, CommandLineRunner {
 
     private final static Logger log = LoggerFactory.getLogger(GatewayServiceHandler.class);
 
-    @Autowired
+    @Resource
     private RedisRouteDefinitionRepository routeDefinitionWriter;
 
     private ApplicationEventPublisher publisher;
@@ -46,7 +46,7 @@ public class GatewayServiceHandler implements ApplicationEventPublisherAware, Co
     }
 
     //自己的获取数据dao
-    @Autowired
+    @Resource
     private GatewayRouteMapper gatewayRouteMapper;
 
     // springboot启动后执行

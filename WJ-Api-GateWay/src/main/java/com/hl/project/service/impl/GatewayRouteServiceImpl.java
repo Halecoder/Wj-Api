@@ -1,25 +1,38 @@
-package com.hl.project.service;
+package com.hl.project.service.impl;
 
 
+import com.hl.project.configuration.GatewayServiceHandler;
 import com.hl.project.dao.GatewayRouteMapper;
-import com.hl.project.dto.GatewayRouteDto;
-import com.hl.project.entity.GatewayRoute;
+import com.hl.project.model.dto.GatewayRouteDto;
+import com.hl.project.model.entity.GatewayRoute;
+import com.hl.project.service.InnerGatewayRouteService;
+import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
 /**
  *  自定义service层，增、删、改、查数据库路由配置信息
  */
-@Service
-public class GatewayRouteService {
+@Service(version = "${dubbo.service.version}")
+@org.springframework.stereotype.Service
+public class GatewayRouteServiceImpl implements InnerGatewayRouteService {
 
-    @Autowired
+    @Resource
     private GatewayRouteMapper gatewayRouteMapper;
 
+    @Autowired
+    private GatewayServiceHandler gatewayServiceHandler;
+
+    @Override
+    public String refresh()  {
+        return gatewayServiceHandler.loadRouteConfig();
+    }
+
+    @Override
     public Integer add(GatewayRouteDto gatewayRouteDto) {
         GatewayRoute gatewayRoute = new GatewayRoute();
         BeanUtils.copyProperties(gatewayRouteDto, gatewayRoute);
@@ -31,6 +44,7 @@ public class GatewayRouteService {
         return gatewayRouteMapper.insertSelective(gatewayRoute);
     }
 
+    @Override
     public Integer update(GatewayRouteDto gatewayRouteDto) {
         GatewayRoute gatewayRoute = new GatewayRoute();
         BeanUtils.copyProperties(gatewayRouteDto, gatewayRoute);
@@ -39,12 +53,15 @@ public class GatewayRouteService {
         return gatewayRouteMapper.updateByPrimaryKeySelective(gatewayRoute);
     }
 
+    @Override
     public Integer delete(String id) {
         return gatewayRouteMapper.deleteByPrimaryKey(Long.parseLong(id));
     }
 
+    @Override
     public List<GatewayRoute> queryAllRoutes(){
         return gatewayRouteMapper.queryAllRoutes();
     }
+
 
 }

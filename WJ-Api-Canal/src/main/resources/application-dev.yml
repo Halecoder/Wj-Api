@@ -1,0 +1,22 @@
+server:
+  port: 9000
+
+canal:
+  server: 127.0.0.1:11111
+  destination: example
+
+nacos:
+  service-address: localhost
+  port: 8848
+dubbo:
+  service:
+    version: 1.0.0
+  application:
+    name: wj-api-canal-consumer
+  registry:
+    address: nacos://${nacos.service-address}:${nacos.port}
+#  protocol:
+#    name: dubbo
+#    port: 20990 # -1 表示端口自增 from 20880
+  scan:
+    base-packages: com.hl.project.service

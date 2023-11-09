@@ -1,11 +1,12 @@
-package com.hl.project.entity;
+package com.hl.project.model.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 实体
  */
-public class GatewayRoute {
+public class GatewayRoute implements Serializable {
 
     private Long id;
 

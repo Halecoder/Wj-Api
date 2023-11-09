@@ -2,9 +2,9 @@ package com.hl.project.controller;
 
 
 import com.hl.project.configuration.GatewayServiceHandler;
-import com.hl.project.dto.GatewayRouteDto;
-import com.hl.project.entity.GatewayRoute;
-import com.hl.project.service.GatewayRouteService;
+import com.hl.project.model.dto.GatewayRouteDto;
+import com.hl.project.model.entity.GatewayRoute;
+import com.hl.project.service.InnerGatewayRouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +25,7 @@ public class RouteController {
     private GatewayServiceHandler gatewayServiceHandler;
 
     @Autowired
-    private GatewayRouteService gatewayRouteService;
+    private InnerGatewayRouteService gatewayRouteService;
 
     /**
      * 刷新路由配置
@@ -36,31 +36,31 @@ public class RouteController {
         return this.gatewayServiceHandler.loadRouteConfig();
     }
 
-    /**
-     * 增加路由记录
-     *
-     * @return
-     */
-    @PostMapping("/add")
-    public String add(@RequestBody GatewayRouteDto gatewayRouteDto) throws Exception {
-        gatewayRouteService.add(gatewayRouteDto);
-        gatewayServiceHandler.loadRouteConfig();
-        return "success";
-    }
-
-    @PostMapping("/update")
-    public String update(@RequestBody GatewayRouteDto gatewayRouteDto) throws Exception {
-        gatewayRouteService.update(gatewayRouteDto);
-        gatewayServiceHandler.loadRouteConfig();
-        return "success";
-    }
-
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable String id) throws Exception {
-        gatewayRouteService.delete(id);
-        gatewayServiceHandler.deleteRoute(id);
-        return "success";
-    }
+//    /**
+//     * 增加路由记录
+//     *
+//     * @return
+//     */
+//    @PostMapping("/add")
+//    public String add(@RequestBody GatewayRouteDto gatewayRouteDto) throws Exception {
+//        gatewayRouteService.add(gatewayRouteDto);
+//        gatewayServiceHandler.loadRouteConfig();
+//        return "success";
+//    }
+//
+//    @PostMapping("/update")
+//    public String update(@RequestBody GatewayRouteDto gatewayRouteDto) throws Exception {
+//        gatewayRouteService.update(gatewayRouteDto);
+//        gatewayServiceHandler.loadRouteConfig();
+//        return "success";
+//    }
+//
+//    @GetMapping("/delete/{id}")
+//    public String delete(@PathVariable String id) throws Exception {
+//        gatewayRouteService.delete(id);
+//        gatewayServiceHandler.deleteRoute(id);
+//        return "success";
+//    }
 
     @GetMapping("/routes")
     public List<GatewayRoute> routes() throws Exception {

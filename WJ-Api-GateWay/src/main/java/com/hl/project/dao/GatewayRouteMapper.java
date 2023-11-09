@@ -1,12 +1,10 @@
 package com.hl.project.dao;
 
 
-import com.hl.project.entity.GatewayRoute;
-import org.springframework.stereotype.Repository;
+import com.hl.project.model.entity.GatewayRoute;
 
 import java.util.List;
 
-@Repository
 public interface GatewayRouteMapper {
     int deleteByPrimaryKey(Long id);
 

@@ -75,6 +75,11 @@ dubbo:
     name: wj-api-gateway-consumer
   registry:
     address: nacos://${nacos.service-address}:${nacos.port}
+  protocol:
+    name: dubbo
+    port: -1 # -1 表示端口自增 from 20880
+  scan:
+    base-packages: com.hl.project.*.impl
 
 
 

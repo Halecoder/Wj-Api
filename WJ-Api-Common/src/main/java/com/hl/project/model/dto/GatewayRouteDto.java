@@ -1,4 +1,4 @@
-package com.hl.project.dto;
+package com.hl.project.model.dto;
 
 import java.io.Serializable;
 
