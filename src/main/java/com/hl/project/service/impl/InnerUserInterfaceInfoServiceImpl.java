@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.hl.project.common.ErrorCode;
 import com.hl.project.exception.BusinessException;
+import com.hl.project.mapper.InterfaceInfoMapper;
 import com.hl.project.mapper.UserInterfaceInfoMapper;
+import com.hl.project.model.entity.InterfaceInfo;
 import com.hl.project.model.entity.UserInterfaceInfo;
 import com.hl.project.service.InnerUserInterfaceInfoService;
 import org.apache.dubbo.config.annotation.Service;
@@ -22,6 +24,9 @@ public class InnerUserInterfaceInfoServiceImpl implements InnerUserInterfaceInfo
 
     @Resource
     private UserInterfaceInfoMapper userInterfaceInfoMapper;
+
+    @Resource
+    private InterfaceInfoMapper interfaceInfoMapper;
 
     @Override
     public boolean hasInvokeNum(long userId, long interfaceInfoId) {
@@ -52,6 +57,19 @@ public class InnerUserInterfaceInfoServiceImpl implements InnerUserInterfaceInfo
 
         int updateCount = userInterfaceInfoMapper.update(null, updateWrapper);
         return updateCount > 0;
+    }
+//    根据接口id查名
+    @Override
+    public String getInterfaceNameById(long interfaceInfoId) {
+        if (interfaceInfoId <= 0) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+
+        LambdaQueryWrapper<InterfaceInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(InterfaceInfo::getId, interfaceInfoId);
+
+        InterfaceInfo interfaceInfo = interfaceInfoMapper.selectOne(queryWrapper);
+        return interfaceInfo.getName();
     }
 
 }

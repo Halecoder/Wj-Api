@@ -21,4 +21,7 @@ public interface InnerUserInterfaceInfoService {
      */
     boolean invokeInterfaceCount(long userId, long interfaceInfoId);
 
+
+    //    根据接口id查名
+    String getInterfaceNameById(long interfaceInfoId);
 }

@@ -9,6 +9,7 @@ import com.hl.project.model.entity.User;
 import com.hl.project.service.InnerInterfaceInfoService;
 import com.hl.project.service.InnerUserInterfaceInfoService;
 import com.hl.project.service.InnerUserService;
+import com.hl.project.service.RankService;
 import com.hl.utils.SignUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -29,6 +30,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -56,6 +58,9 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
     @Reference(version = "${dubbo.service.version}", check = false)
     private InnerUserInterfaceInfoService innerUserInterfaceInfoService;
+
+    @Reference(version = "${dubbo.service.version}", check = false)
+    private RankService rankService;
 
     private static final List<String> IP_WHITE_LIST = Arrays.asList("127.0.0.1", "127.0.0.2","0:0:0:0:0:0:0:1");
 
@@ -201,6 +206,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                                 // 7. 调用成功，接口调用次数+1
                                 try {
                                     innerUserInterfaceInfoService.invokeInterfaceCount(userId, interfaceInfoId);
+                                    rankService.zIncreamentScore(innerUserInterfaceInfoService.getInterfaceNameById(interfaceInfoId),1);
                                 } catch (Exception e) {
                                     log.error("invokeInterfaceCount error", e);
                                 }
