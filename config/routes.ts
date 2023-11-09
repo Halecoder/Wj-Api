@@ -28,6 +28,12 @@ export default [
         path: '/admin/interface_info',
         component: './Admin/InterfaceInfo',
       },
+      {
+        name: '接口排行',
+        icon: 'table',
+        path: '/admin/chart_rank',
+        component: './Admin/charts',
+      },
     ],
   },
   { path: '/', redirect: '/welcome' },
