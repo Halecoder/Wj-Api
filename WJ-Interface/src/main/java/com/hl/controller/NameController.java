@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
  */
 
 @RestController
-@RequestMapping("/api/name")
+@RequestMapping("/name")
 public class NameController {
 
     @PostMapping("/test")

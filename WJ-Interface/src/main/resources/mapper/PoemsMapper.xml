@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hl.mapper.PoemsMapper">
+
+    <resultMap id="BaseResultMap" type="com.hl.domain.Poems">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="author_id" column="author_id" jdbcType="INTEGER"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="author" column="author" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,author_id,title,
+        content,author
+    </sql>
+    <select id="getOnePoem" resultType="com.hl.domain.Poems">
+<!--        SELECT * FROM poems ORDER BY RAND() LIMIT 1; 太慢-->
+        SELECT * FROM poems WHERE id >= ((SELECT MAX(id) FROM poems)-(SELECT MIN(id) FROM poems)) * RAND() + (SELECT MIN(id) FROM poems) LIMIT 1;
+    </select>
+</mapper>
