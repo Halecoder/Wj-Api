@@ -66,4 +66,15 @@ public class RankServiceImpl implements RankService {
 
     }
 
+
+    /**
+     * @param
+     * @return
+     *  删除指定数据
+     */
+    @Override
+    public long zremove(String value) {
+        return redisUtil.zRemove(key,value);
+    }
+
 }

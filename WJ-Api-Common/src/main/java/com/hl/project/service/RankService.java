@@ -18,4 +18,6 @@ public interface RankService {
 
 
     List<HashMap<String,Object>> zReverseRangeWithScore();
+
+    long zremove(String value);
 }

@@ -8,6 +8,8 @@ import java.util.List;
 public interface InnerGatewayRouteService {
     String refresh();
 
+    void deleteRoute(String routeId);
+
     Integer add(GatewayRouteDto gatewayRouteDto);
 
     Integer update(GatewayRouteDto gatewayRouteDto);

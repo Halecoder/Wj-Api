@@ -33,6 +33,11 @@ public class GatewayRouteServiceImpl implements InnerGatewayRouteService {
     }
 
     @Override
+    public void deleteRoute(String routeId) {
+        gatewayServiceHandler.deleteRoute(routeId);
+    }
+
+    @Override
     public Integer add(GatewayRouteDto gatewayRouteDto) {
         GatewayRoute gatewayRoute = new GatewayRoute();
         BeanUtils.copyProperties(gatewayRouteDto, gatewayRoute);

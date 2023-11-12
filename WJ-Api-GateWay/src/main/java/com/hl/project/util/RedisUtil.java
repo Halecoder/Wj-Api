@@ -94,4 +94,15 @@ public class RedisUtil {
         return sets;
     }
 
+    /**
+     * 删除集合中的元素
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public Long zRemove(String key, String value) {
+        return redisTemplate.opsForZSet().remove(key, value);
+    }
+
 }

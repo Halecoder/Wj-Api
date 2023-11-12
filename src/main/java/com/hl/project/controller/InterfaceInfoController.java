@@ -21,6 +21,7 @@ import com.hl.project.model.entity.User;
 import com.hl.project.model.enums.InterfaceInfoStatusEnum;
 import com.hl.project.service.InnerGatewayRouteService;
 import com.hl.project.service.InterfaceInfoService;
+import com.hl.project.service.RankService;
 import com.hl.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +55,10 @@ public class InterfaceInfoController {
     @Reference(version = "${dubbo.service.version}",check=false)
     private InnerGatewayRouteService innerGateWayService;
 
-    // region 增删改查
+    @Reference(version = "${dubbo.service.version}", check = false)
+    private RankService rankService;
+
+
 
     /**
      * 创建
@@ -111,6 +115,10 @@ public class InterfaceInfoController {
         if(b){
             //删除路由
             innerGateWayService.delete(String.valueOf(deleteRequest.getId()));
+            //删除Redis缓存
+            innerGateWayService.deleteRoute(String.valueOf(deleteRequest.getId()));
+            //删除排行榜
+            rankService.zremove(oldInterfaceInfo.getName());
         }
         return ResultUtils.success(b);
     }
